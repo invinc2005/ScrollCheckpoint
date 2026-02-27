@@ -1,40 +1,46 @@
-/* The horizontal line that represents your checkpoint */
+/* The floating circular indicator */
 .checkpoint-marker {
   position: absolute;
-  /* Allows it to stay at a specific Y coordinate on the page */
-  left: 0;
-  width: 100%;
-  height: 4px;
-  /* Slightly thicker for better visibility */
-  background-color: #4285f4;
-  /* Google Blue */
-
-  /* Neon glow effect to make it pop against dark/light modes */
-  box-shadow: 0 0 10px rgba(66, 133, 244, 0.7),
-    0 0 20px rgba(66, 133, 244, 0.4);
-
-  /* The highest possible z-index to ensure it sits above all chat elements */
+  right: 25px;
+  font-size: 24px;
+  /* Adjust size of emoji */
   z-index: 2147483647;
-
-  /* Critical: Ensures you can still click on buttons/text "through" the line */
-  pointer-events: none;
-
-  /* Smooth entry and exit */
-  opacity: 1;
-  transition: opacity 0.5s ease-in-out;
+  cursor: pointer;
+  /* Remove background and borders */
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  /* Prevent selection */
+  user-select: none;
+  -webkit-user-select: none;
 }
 
-/* Optional: Add a subtle animation when the line first appears */
-@keyframes pulse-in {
-  0% {
-    transform: scaleY(0);
-  }
-
-  100% {
-    transform: scaleY(1);
-  }
+.checkpoint-marker:hover {
+  transform: scale(1.1);
 }
 
-.checkpoint-marker {
-  animation: pulse-in 0.2s ease-out;
+/* The small context menu box */
+.checkpoint-menu {
+  position: absolute;
+  right: 35px;
+  /* Appears to the left of the circle */
+  background: #ffffff;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 8px 0;
+  min-width: 120px;
+  z-index: 2147483647;
+  font-family: sans-serif;
+  color: #333;
+}
+
+.checkpoint-menu-item {
+  padding: 8px 16px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.checkpoint-menu-item:hover {
+  background-color: #f1f3f4;
 }

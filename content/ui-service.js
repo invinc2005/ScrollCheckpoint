@@ -1,29 +1,51 @@
 class UIService {
     constructor() {
-        this.activeLine = null;
+        this.activeMarker = null;
+        this.activeMenu = null;
     }
 
-    showLine(y) {
-        // Use the same search logic
-        const scroller = new ScrollStrategy()._getTrueScroller();
+    async showLine(y) {
+    const scroller = new ScrollStrategy()._getTrueScroller();
+    const settings = await chrome.storage.local.get(['userColor', 'userEmoji']);
+    
+    this._cleanup();
 
-        if (this.activeLine) this.activeLine.remove();
+    const marker = document.createElement('div');
+    marker.className = 'checkpoint-marker';
+    marker.style.top = `${y}px`;
+    marker.innerText = settings.userEmoji || "📍"; // Use the saved emoji
+    
+    // We can still use the color for a brief glow effect when set
+    marker.style.textShadow = `0 0 10px ${settings.userColor || '#4285f4'}`;
 
-        const line = document.createElement('div');
-        line.className = 'checkpoint-marker';
-        line.style.top = `${y}px`;
-        
-        // Ensure the scroller can host the absolute line
-        if (getComputedStyle(scroller).position === 'static') {
-            scroller.style.position = 'relative';
-        }
+    scroller.appendChild(marker);
+    this.activeMarker = marker;
+}
+    _createMenu(y) {
+        const menu = document.createElement('div');
+        menu.className = 'checkpoint-menu';
+        menu.style.top = `${y + 30}px`; // Offset below the marker
+        menu.style.display = 'none';
 
-        scroller.appendChild(line);
-        this.activeLine = line;
+        // Option 1: Scroll to Here (Placeholder for future logic)
+        const optScroll = document.createElement('div');
+        optScroll.className = 'checkpoint-menu-item';
+        optScroll.innerText = "Jump to this";
+        optScroll.onclick = () => window.scrollTo({top: y, behavior: 'smooth'});
 
-        // Flash confirmation
-        scroller.style.transition = "outline 0.2s";
-        scroller.style.outline = "4px solid #4285f4";
-        setTimeout(() => scroller.style.outline = "none", 300);
+        // Option 2: Settings Redirect
+        const optSettings = document.createElement('div');
+        optSettings.className = 'checkpoint-menu-item';
+        optSettings.innerText = "Settings";
+        optSettings.onclick = () => chrome.runtime.sendMessage({action: "OPEN_OPTIONS"});
+
+        menu.appendChild(optScroll);
+        menu.appendChild(optSettings);
+        return menu;
+    }
+
+    _cleanup() {
+        if (this.activeMarker) this.activeMarker.remove();
+        if (this.activeMenu) this.activeMenu.remove();
     }
 }
