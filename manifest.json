@@ -1,0 +1,43 @@
+{
+  "manifest_version": 3,
+  "name": "Gemini Scroll Checkpoints",
+  "version": "1.0",
+  "permissions": [
+    "storage"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://gemini.google.com/*"
+      ],
+      "css": [
+        "styles/checkpoints.css"
+      ],
+      "js": [
+        "content/base-strategy.js",
+        "content/scroll-strategy.js",
+        "content/ui-service.js",
+        "content/main.js"
+      ]
+    }
+  ],
+  "commands": {
+    "set-checkpoint": {
+      "suggested_key": {
+        "default": "Alt+Shift+S",
+        "mac": "Command+Shift+S"
+      },
+      "description": "Save Current Position"
+    },
+    "goto-checkpoint": {
+      "suggested_key": {
+        "default": "Alt+Shift+G",
+        "mac": "Command+Shift+G"
+      },
+      "description": "Return to Position"
+    }
+  }
+}
