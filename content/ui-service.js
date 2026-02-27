@@ -5,22 +5,22 @@ class UIService {
     }
 
     async showLine(y) {
-    const scroller = new ScrollStrategy()._getTrueScroller();
-    const settings = await chrome.storage.local.get(['userColor', 'userEmoji']);
-    
-    this._cleanup();
+        this.clear(false); // Remove existing marker from UI only
 
-    const marker = document.createElement('div');
-    marker.className = 'checkpoint-marker';
-    marker.style.top = `${y}px`;
-    marker.innerText = settings.userEmoji || "📍"; // Use the saved emoji
-    
-    // We can still use the color for a brief glow effect when set
-    marker.style.textShadow = `0 0 10px ${settings.userColor || '#4285f4'}`;
+        const scroller = new ScrollStrategy()._getTrueScroller();
+        const settings = await chrome.storage.local.get(['userColor', 'userEmoji']);
+        
+        const marker = document.createElement('div');
+        marker.className = 'checkpoint-marker';
+        marker.style.top = `${y}px`;
+        marker.innerText = settings.userEmoji || "📍"; 
+        
+        marker.style.textShadow = `0 0 10px ${settings.userColor || '#4285f4'}`;
 
-    scroller.appendChild(marker);
-    this.activeMarker = marker;
-}
+        scroller.style.position = 'relative';
+        scroller.appendChild(marker);
+        this.activeMarker = marker;
+    }
     _createMenu(y) {
         const menu = document.createElement('div');
         menu.className = 'checkpoint-menu';
@@ -47,5 +47,18 @@ class UIService {
     _cleanup() {
         if (this.activeMarker) this.activeMarker.remove();
         if (this.activeMenu) this.activeMenu.remove();
+    }
+    clear(removeFromStorage = true) {
+        // Remove the element from the DOM
+        if (this.activeMarker) {
+            this.activeMarker.remove();
+            this.activeMarker = null;
+        }
+        
+        // Wipe the data from memory so it doesn't reappear on reload
+        if (removeFromStorage) {
+            chrome.storage.local.remove("last_y");
+            console.log("ScrollCheckpoint: Data and Marker cleared.");
+        }
     }
 }
